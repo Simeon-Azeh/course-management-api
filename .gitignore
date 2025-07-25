@@ -1,0 +1,12 @@
+node_modules/
+# Ignore all log files
+*.log
+# Ignore all temporary files
+*.tmp
+# Ignore all backup files
+*.bak
+# Ignore all cache files
+.cache/
+# Ignore environment variable files
+.env
+.DS_Store
