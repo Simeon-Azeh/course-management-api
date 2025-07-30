@@ -59,10 +59,25 @@ router.get('/:id', allocationsController.getAllocationById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - moduleId
+ *               - cohortId
+ *               - term
+ *               - academicYear
  *             properties:
- *               classId:
+ *               moduleId:
+ *                 type: string
+ *               cohortId:
  *                 type: string
  *               facilitatorId:
+ *                 type: string
+ *               term:
+ *                 type: string
+ *               academicYear:
+ *                 type: string
+ *               modeId:
+ *                 type: string
+ *               intakePeriod:
  *                 type: string
  *     responses:
  *       201:
@@ -101,9 +116,19 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
- *               classId:
+ *               moduleId:
+ *                 type: string
+ *               cohortId:
  *                 type: string
  *               facilitatorId:
+ *                 type: string
+ *               term:
+ *                 type: string
+ *               academicYear:
+ *                 type: string
+ *               modeId:
+ *                 type: string
+ *               intakePeriod:
  *                 type: string
  *     responses:
  *       200:

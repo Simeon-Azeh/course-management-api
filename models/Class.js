@@ -21,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'facilitatorId',
         as: 'facilitator'
       });
+
+      Class.belongsTo(models.Mode, {
+        foreignKey: 'modeId',
+        as: 'mode'
+      });
     }
   }
 
@@ -44,6 +49,26 @@ module.exports = (sequelize, DataTypes) => {
     },
     durationMinutes: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    moduleId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    },
+    cohortId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    },
+    facilitatorId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    },
+    modeId: {
+      type: DataTypes.UUID,
+      allowNull: true
+    },
+    courseOfferingId: {
+      type: DataTypes.UUID,
       allowNull: true
     }
   }, {

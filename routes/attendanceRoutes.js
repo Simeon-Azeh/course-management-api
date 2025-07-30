@@ -11,7 +11,7 @@ const attendanceController = require('../controllers/attendanceController');
 
 /**
  * @swagger
- * /attendance:
+ * /attendances:
  *   get:
  *     summary: Get all attendance records
  *     tags: [Attendance]
@@ -23,7 +23,7 @@ router.get('/', attendanceController.getAllAttendances);
 
 /**
  * @swagger
- * /attendance/{id}:
+ * /attendances/{id}:
  *   get:
  *     summary: Get an attendance record by ID
  *     tags: [Attendance]
@@ -44,7 +44,7 @@ router.get('/:id', attendanceController.getAttendanceById);
 
 /**
  * @swagger
- * /attendance:
+ * /attendances:
  *   post:
  *     summary: Create a new attendance record
  *     tags: [Attendance]
@@ -75,7 +75,7 @@ router.post('/', attendanceController.createAttendance);
 
 /**
  * @swagger
- * /attendance/{id}:
+ * /attendances/{id}:
  *   put:
  *     summary: Update an attendance record by ID
  *     tags: [Attendance]
@@ -115,7 +115,7 @@ router.put('/:id', attendanceController.updateAttendance);
 
 /**
  * @swagger
- * /attendance/{id}:
+ * /attendances/{id}:
  *   delete:
  *     summary: Delete an attendance record by ID
  *     tags: [Attendance]

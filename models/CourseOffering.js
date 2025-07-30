@@ -21,6 +21,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'courseOfferingId',
         as: 'classes'
       });
+
+      // Course offering belongs to one facilitator (User)
+      CourseOffering.belongsTo(models.User, {
+        foreignKey: 'facilitatorId',
+        as: 'facilitator'
+      });
+
+      // Course offering belongs to one mode (Online/In-person/Hybrid)
+      CourseOffering.belongsTo(models.Mode, {
+        foreignKey: 'modeId',
+        as: 'mode'
+      });
     }
   }
 
@@ -45,6 +57,18 @@ module.exports = (sequelize, DataTypes) => {
     academicYear: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    intakePeriod: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    modeId: {
+      type: DataTypes.UUID,
+      allowNull: true
+    },
+    facilitatorId: {
+      type: DataTypes.UUID,
+      allowNull: true
     }
   }, {
     sequelize,

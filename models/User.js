@@ -1,19 +1,34 @@
 'use strict';
 const { Model } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // Users can be facilitators managing many classes or course offerings
+     
       User.hasMany(models.CourseOffering, {
         foreignKey: 'facilitatorId',
         as: 'facilitatedCourses'
       });
 
-      // Optional: track login/activity
+      
       User.hasMany(models.ActivityTracker, {
         foreignKey: 'userId',
         as: 'activities'
+      });
+      User.hasOne(models.Student, {
+        foreignKey: 'userId',
+        as: 'studentProfile'
+      });
+
+      User.hasOne(models.Facilitator, {
+        foreignKey: 'userId',
+        as: 'facilitatorProfile'
+      });
+
+      User.hasOne(models.Manager, {
+        foreignKey: 'userId',
+        as: 'managerProfile'
       });
     }
   }
@@ -37,11 +52,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     password: {
-  type: DataTypes.STRING,
-  allowNull: false,
-},
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     role: {
-      type: DataTypes.ENUM('manager', 'facilitator'),
+      type: DataTypes.ENUM('manager', 'facilitator', 'student'),
       allowNull: false
     },
     phone: {
@@ -52,7 +67,27 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
     tableName: 'users',
-    timestamps: true
+    timestamps: true,
+    defaultScope: {
+      attributes: { exclude: ['password'] }
+    },
+    scopes: {
+      withPassword: {
+        attributes: {}
+      }
+    }
+  });
+
+  // Hash password before creating user
+  User.beforeCreate(async (user) => {
+    user.password = await bcrypt.hash(user.password, 10);
+  });
+
+  // Hash password before updating user if password is changed
+  User.beforeUpdate(async (user) => {
+    if (user.changed('password')) {
+      user.password = await bcrypt.hash(user.password, 10);
+    }
   });
 
   return User;

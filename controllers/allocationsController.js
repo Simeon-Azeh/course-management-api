@@ -5,9 +5,9 @@ const getAllAllocations = async (req, res) => {
     const allocations = await CourseOffering.findAll({
       include: [
         { model: Module, as: 'module', attributes: ['id', 'title'] },
-        { model: Class, as: 'class', attributes: ['id', 'name', 'startDate', 'graduationDate'] },
+        { model: Class, as: 'classes', attributes: ['id', 'topic', 'date', 'time'] },
         { model: User, as: 'facilitator', attributes: ['id', 'fullName', 'email'] },
-        { model: Mode, as: 'mode', attributes: ['id', 'name'] }
+        { model: Mode, as: 'mode', attributes: ['id', 'type'] }
       ]
     });
     res.json(allocations);
@@ -22,9 +22,9 @@ const getAllocationById = async (req, res) => {
     const allocation = await CourseOffering.findByPk(req.params.id, {
       include: [
         { model: Module, as: 'module', attributes: ['id', 'title'] },
-        { model: Class, as: 'class', attributes: ['id', 'name', 'startDate', 'graduationDate'] },
+        { model: Class, as: 'classes', attributes: ['id', 'topic', 'date', 'time'] },
         { model: User, as: 'facilitator', attributes: ['id', 'fullName', 'email'] },
-        { model: Mode, as: 'mode', attributes: ['id', 'name'] }
+        { model: Mode, as: 'mode', attributes: ['id', 'type'] }
       ]
     });
     if (!allocation) return res.status(404).json({ message: 'Allocation not found' });
@@ -37,14 +37,15 @@ const getAllocationById = async (req, res) => {
 
 const createAllocation = async (req, res) => {
   try {
-    const { moduleId, classId, facilitatorId, trimester, modeId, year } = req.body;
+    const { moduleId, cohortId, facilitatorId, term, modeId, academicYear, intakePeriod } = req.body;
     const newAllocation = await CourseOffering.create({
       moduleId,
-      classId,
+      cohortId,
       facilitatorId,
-      trimester,
+      term,
       modeId,
-      year
+      academicYear,
+      intakePeriod
     });
     res.status(201).json(newAllocation);
   } catch (error) {
@@ -55,11 +56,11 @@ const createAllocation = async (req, res) => {
 
 const updateAllocation = async (req, res) => {
   try {
-    const { moduleId, classId, facilitatorId, trimester, modeId, year } = req.body;
+    const { moduleId, cohortId, facilitatorId, term, modeId, academicYear, intakePeriod } = req.body;
     const allocation = await CourseOffering.findByPk(req.params.id);
     if (!allocation) return res.status(404).json({ message: 'Allocation not found' });
 
-    await allocation.update({ moduleId, classId, facilitatorId, trimester, modeId, year });
+    await allocation.update({ moduleId, cohortId, facilitatorId, term, modeId, academicYear, intakePeriod });
     res.json(allocation);
   } catch (error) {
     console.error(error);

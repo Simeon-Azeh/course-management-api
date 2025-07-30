@@ -23,8 +23,30 @@ const getClassById = async (req, res) => {
 
 const createClass = async (req, res) => {
   try {
-    const { name, startDate, graduationDate } = req.body;
-    const newClass = await Class.create({ name, startDate, graduationDate });
+    const {
+      topic,
+      date,
+      time,
+      durationMinutes,
+      moduleId,
+      cohortId,
+      facilitatorId,
+      modeId,
+      courseOfferingId
+    } = req.body;
+
+    const newClass = await Class.create({
+      topic,
+      date,
+      time,
+      durationMinutes,
+      moduleId,
+      cohortId,
+      facilitatorId,
+      modeId,
+      courseOfferingId
+    });
+
     res.status(201).json(newClass);
   } catch (error) {
     console.error(error);
@@ -34,11 +56,33 @@ const createClass = async (req, res) => {
 
 const updateClass = async (req, res) => {
   try {
-    const { name, startDate, graduationDate } = req.body;
+    const {
+      topic,
+      date,
+      time,
+      durationMinutes,
+      moduleId,
+      cohortId,
+      facilitatorId,
+      modeId,
+      courseOfferingId
+    } = req.body;
+
     const singleClass = await Class.findByPk(req.params.id);
     if (!singleClass) return res.status(404).json({ message: 'Class not found' });
 
-    await singleClass.update({ name, startDate, graduationDate });
+    await singleClass.update({
+      topic,
+      date,
+      time,
+      durationMinutes,
+      moduleId,
+      cohortId,
+      facilitatorId,
+      modeId,
+      courseOfferingId
+    });
+
     res.json(singleClass);
   } catch (error) {
     console.error(error);

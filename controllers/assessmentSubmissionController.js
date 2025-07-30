@@ -27,12 +27,28 @@ const getSubmissionById = async (req, res) => {
 
 const createSubmission = async (req, res) => {
   try {
-    const { studentId, assessmentTitle, score, submittedAt } = req.body;
-    const newSubmission = await AssessmentSubmission.create({ studentId, assessmentTitle, score, submittedAt });
+    const {
+      studentId,
+      assessmentId,
+      courseOfferingId,
+      assessmentTitle,
+      score,
+      submittedAt
+    } = req.body;
+
+    const newSubmission = await AssessmentSubmission.create({
+      studentId,
+      assessmentId,
+      courseOfferingId,
+      assessmentTitle,
+      score,
+      submittedAt
+    });
+
     res.status(201).json(newSubmission);
   } catch (error) {
     console.error(error);
-    res.status(400).json({ message: 'Failed to create submission' });
+    res.status(400).json({ message: 'Failed to create submission', error: error.message });
   }
 };
 

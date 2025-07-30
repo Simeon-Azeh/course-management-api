@@ -2,7 +2,26 @@ const { CourseOffering, Module, Cohort, Class } = require('../models');
 
 const getAllCourseOfferings = async (req, res) => {
   try {
+    const { cohortId, term, intakePeriod, modeId } = req.query;
+    const where = {};
+
+    // Role-based filtering
+    if (req.user.role === 'facilitator') {
+      where.facilitatorId = req.user.id;
+    } else {
+      // Managers can filter by facilitatorId if provided
+      if (req.query.facilitatorId) {
+        where.facilitatorId = req.query.facilitatorId;
+      }
+    }
+
+    if (cohortId) where.cohortId = cohortId;
+    if (term) where.term = term;
+    if (intakePeriod) where.intakePeriod = intakePeriod;
+    if (modeId) where.modeId = modeId;
+
     const courseOfferings = await CourseOffering.findAll({
+      where,
       include: [
         { model: Module, as: 'module', attributes: ['id', 'title'] },
         { model: Cohort, as: 'cohort', attributes: ['id', 'name'] },
@@ -28,6 +47,10 @@ const getCourseOfferingById = async (req, res) => {
     if (!courseOffering) {
       return res.status(404).json({ message: 'Course offering not found' });
     }
+    // If facilitator, check ownership
+    if (req.user.role === 'facilitator' && courseOffering.facilitatorId !== req.user.id) {
+      return res.status(403).json({ message: 'Forbidden: Not your course offering' });
+    }
     res.status(200).json(courseOffering);
   } catch (error) {
     console.error(error);
@@ -36,14 +59,27 @@ const getCourseOfferingById = async (req, res) => {
 };
 
 const createCourseOffering = async (req, res) => {
-  const { moduleId, cohortId, term, academicYear } = req.body;
+  const { moduleId, cohortId, term, academicYear, intakePeriod, modeId, facilitatorId } = req.body;
+
+  // Managers only can assign facilitatorId (optional)
+  if (req.user.role !== 'manager') {
+    return res.status(403).json({ message: 'Forbidden: Only managers can create course offerings' });
+  }
 
   if (!moduleId || !cohortId || !term || !academicYear) {
-    return res.status(400).json({ message: 'All fields are required: moduleId, cohortId, term, academicYear' });
+    return res.status(400).json({ message: 'Fields required: moduleId, cohortId, term, academicYear' });
   }
 
   try {
-    const newCourseOffering = await CourseOffering.create({ moduleId, cohortId, term, academicYear });
+    const newCourseOffering = await CourseOffering.create({
+      moduleId,
+      cohortId,
+      term,
+      academicYear,
+      intakePeriod,
+      modeId,
+      facilitatorId
+    });
     res.status(201).json(newCourseOffering);
   } catch (error) {
     console.error(error);
@@ -52,7 +88,7 @@ const createCourseOffering = async (req, res) => {
 };
 
 const updateCourseOffering = async (req, res) => {
-  const { moduleId, cohortId, term, academicYear } = req.body;
+  const { moduleId, cohortId, term, academicYear, intakePeriod, modeId, facilitatorId } = req.body;
 
   try {
     const courseOffering = await CourseOffering.findByPk(req.params.id);
@@ -60,7 +96,20 @@ const updateCourseOffering = async (req, res) => {
       return res.status(404).json({ message: 'Course offering not found' });
     }
 
-    await courseOffering.update({ moduleId, cohortId, term, academicYear });
+    // Only managers can update
+    if (req.user.role !== 'manager') {
+      return res.status(403).json({ message: 'Forbidden: Only managers can update course offerings' });
+    }
+
+    await courseOffering.update({
+      moduleId,
+      cohortId,
+      term,
+      academicYear,
+      intakePeriod,
+      modeId,
+      facilitatorId
+    });
     res.status(200).json(courseOffering);
   } catch (error) {
     console.error(error);
@@ -73,6 +122,11 @@ const deleteCourseOffering = async (req, res) => {
     const courseOffering = await CourseOffering.findByPk(req.params.id);
     if (!courseOffering) {
       return res.status(404).json({ message: 'Course offering not found' });
+    }
+
+    // Only managers can delete
+    if (req.user.role !== 'manager') {
+      return res.status(403).json({ message: 'Forbidden: Only managers can delete course offerings' });
     }
 
     await courseOffering.destroy();

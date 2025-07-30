@@ -18,6 +18,34 @@ const modeController = require('../controllers/modeController');
  *     responses:
  *       200:
  *         description: List of all modes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   type:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                   classes:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         topic:
+ *                           type: string
  */
 router.get('/', modeController.getAllModes);
 
@@ -37,6 +65,10 @@ router.get('/', modeController.getAllModes);
  *     responses:
  *       200:
  *         description: Mode found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Mode'
  *       404:
  *         description: Mode not found
  */
@@ -54,12 +86,43 @@ router.get('/:id', modeController.getModeById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - type
+ *               - description
  *             properties:
- *               name:
+ *               type:
+ *                 type: string
+ *               description:
  *                 type: string
  *     responses:
  *       201:
- *         description: Mode created
+ *         description: Mode created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 type:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 classes:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       topic:
+ *                         type: string
  *       400:
  *         description: Invalid input
  */
@@ -85,7 +148,9 @@ router.post('/', modeController.createMode);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               type:
+ *                 type: string
+ *               description:
  *                 type: string
  *     responses:
  *       200:

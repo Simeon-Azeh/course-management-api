@@ -5,7 +5,7 @@ const getAllCohorts = async (req, res) => {
     const cohorts = await Cohort.findAll({
       include: [
         { model: Student, as: 'students', attributes: ['id'] },
-        { model: Class, as: 'classes', attributes: ['id', 'name'] },
+        { model: Class, as: 'classes', attributes: ['id', 'topic', 'durationMinutes', 'facilitatorId'] },
         { model: CourseOffering, as: 'courseOfferings', attributes: ['id'] }
       ]
     });
@@ -21,7 +21,7 @@ const getCohortById = async (req, res) => {
     const cohort = await Cohort.findByPk(req.params.id, {
       include: [
         { model: Student, as: 'students', attributes: ['id', 'userId'] },
-        { model: Class, as: 'classes', attributes: ['id', 'name'] },
+        { model: Class, as: 'classes', attributes: ['id', 'topic'] },
         { model: CourseOffering, as: 'courseOfferings', attributes: ['id'] }
       ]
     });

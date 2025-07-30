@@ -3,7 +3,7 @@ const { Mode, Class } = require('../models');
 const getAllModes = async (req, res) => {
   try {
     const modes = await Mode.findAll({
-      include: [{ model: Class, as: 'classes', attributes: ['id', 'name'] }]
+      include: [{ model: Class, as: 'classes', attributes: ['id', 'topic'] }]
     });
     res.json(modes);
   } catch (error) {
@@ -15,7 +15,7 @@ const getAllModes = async (req, res) => {
 const getModeById = async (req, res) => {
   try {
     const mode = await Mode.findByPk(req.params.id, {
-      include: [{ model: Class, as: 'classes', attributes: ['id', 'name'] }]
+      include: [{ model: Class, as: 'classes', attributes: ['id', 'topic'] }]
     });
     if (!mode) return res.status(404).json({ message: 'Mode not found' });
     res.json(mode);

@@ -23,10 +23,49 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: List of all activity logs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     format: uuid
+ *                   allocationId:
+ *                     type: string
+ *                     format: uuid
+ *                   userId:
+ *                     type: string
+ *                     format: uuid
+ *                   attendance:
+ *                     type: boolean
+ *                   formativeOneGrading:
+ *                     type: number
+ *                     format: float
+ *                   formativeTwoGrading:
+ *                     type: number
+ *                     format: float
+ *                   summativeGrading:
+ *                     type: number
+ *                     format: float
+ *                   courseModeration:
+ *                     type: boolean
+ *                   intranetSync:
+ *                     type: boolean
+ *                   gradeBookStatus:
+ *                     type: string
+ *                     enum: [pending, completed, failed]
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
  *       403:
  *         description: Forbidden
  */
-router.get('/', authenticateToken, authorizeRoles('manager'), activityTrackerController.getAllActivityLogs);
 
 /**
  * @swagger
@@ -42,16 +81,54 @@ router.get('/', authenticateToken, authorizeRoles('manager'), activityTrackerCon
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *         description: Activity log ID
  *     responses:
  *       200:
  *         description: Activity log found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   format: uuid
+ *                 allocationId:
+ *                   type: string
+ *                   format: uuid
+ *                 userId:
+ *                   type: string
+ *                   format: uuid
+ *                 attendance:
+ *                   type: boolean
+ *                 formativeOneGrading:
+ *                   type: number
+ *                   format: float
+ *                 formativeTwoGrading:
+ *                   type: number
+ *                   format: float
+ *                 summativeGrading:
+ *                   type: number
+ *                   format: float
+ *                 courseModeration:
+ *                   type: boolean
+ *                 intranetSync:
+ *                   type: boolean
+ *                 gradeBookStatus:
+ *                   type: string
+ *                   enum: [pending, completed, failed]
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       403:
  *         description: Forbidden
  *       404:
  *         description: Activity log not found
  */
-router.get('/:id', authenticateToken, authorizeRoles('manager', 'facilitator'), activityTrackerController.getActivityLogById);
 
 /**
  * @swagger
@@ -67,26 +144,55 @@ router.get('/:id', authenticateToken, authorizeRoles('manager', 'facilitator'), 
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - allocationId
+ *               - userId
  *             properties:
- *               description:
+ *               allocationId:
  *                 type: string
- *               date:
+ *                 format: uuid
+ *                 description: The ID of the course offering allocation
+ *               userId:
  *                 type: string
- *                 format: date
+ *                 format: uuid
+ *                 description: The ID of the user creating the log
+ *               attendance:
+ *                 type: boolean
+ *                 description: Attendance status
+ *               formativeOneGrading:
+ *                 type: number
+ *                 format: float
+ *                 description: Score for first formative grading
+ *               formativeTwoGrading:
+ *                 type: number
+ *                 format: float
+ *                 description: Score for second formative grading
+ *               summativeGrading:
+ *                 type: number
+ *                 format: float
+ *                 description: Score for summative grading
+ *               courseModeration:
+ *                 type: boolean
+ *                 description: Whether course moderation was done
+ *               intranetSync:
+ *                 type: boolean
+ *                 description: Status of intranet synchronization
+ *               gradeBookStatus:
+ *                 type: string
+ *                 enum: [pending, completed, failed]
+ *                 description: Grade book status
  *     responses:
  *       201:
- *         description: Activity log created
+ *         description: Activity log created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ActivityTracker'
  *       400:
  *         description: Invalid input
  *       403:
  *         description: Forbidden
  */
-router.post(
-  '/',
-  authenticateToken,
-  authorizeRoles('facilitator'),
-  activityTrackerController.createActivityLog
-);
 
 /**
  * @swagger
@@ -102,6 +208,7 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *         description: Activity log ID
  *     requestBody:
  *       required: true
@@ -110,14 +217,38 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
- *               description:
+ *               attendance:
+ *                 type: boolean
+ *                 description: Attendance status
+ *               formativeOneGrading:
+ *                 type: number
+ *                 format: float
+ *                 description: Score for first formative grading
+ *               formativeTwoGrading:
+ *                 type: number
+ *                 format: float
+ *                 description: Score for second formative grading
+ *               summativeGrading:
+ *                 type: number
+ *                 format: float
+ *                 description: Score for summative grading
+ *               courseModeration:
+ *                 type: boolean
+ *                 description: Whether course moderation was done
+ *               intranetSync:
+ *                 type: boolean
+ *                 description: Status of intranet synchronization
+ *               gradeBookStatus:
  *                 type: string
- *               date:
- *                 type: string
- *                 format: date
+ *                 enum: [pending, completed, failed]
+ *                 description: Grade book status
  *     responses:
  *       200:
- *         description: Activity log updated
+ *         description: Activity log updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ActivityTracker'
  *       400:
  *         description: Invalid input
  *       403:
@@ -125,7 +256,6 @@ router.post(
  *       404:
  *         description: Activity log not found
  */
-router.put('/:id', authenticateToken, authorizeRoles('facilitator'), activityTrackerController.updateActivityLog);
 
 /**
  * @swagger
@@ -141,15 +271,21 @@ router.put('/:id', authenticateToken, authorizeRoles('facilitator'), activityTra
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *         description: Activity log ID
  *     responses:
- *       200:
- *         description: Activity log deleted
+ *       204:
+ *         description: Activity log deleted successfully (no content)
  *       403:
  *         description: Forbidden
  *       404:
  *         description: Activity log not found
  */
+
+router.get('/', authenticateToken, authorizeRoles('manager'), activityTrackerController.getAllActivityLogs);
+router.get('/:id', authenticateToken, authorizeRoles('manager', 'facilitator'), activityTrackerController.getActivityLogById);
+router.post('/', authenticateToken, authorizeRoles('facilitator'), activityTrackerController.createActivityLog);
+router.put('/:id', authenticateToken, authorizeRoles('facilitator'), activityTrackerController.updateActivityLog);
 router.delete('/:id', authenticateToken, authorizeRoles('facilitator'), activityTrackerController.deleteActivityLog);
 
 module.exports = router;

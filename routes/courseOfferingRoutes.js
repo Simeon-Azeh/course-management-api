@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const courseOfferingController = require('../controllers/courseOfferingController');
+const authenticateToken = require('../middleware/auth');
+const authorizeRoles = require('../middleware/authorizeRoles');
 
 /**
  * @swagger
@@ -15,11 +17,19 @@ const courseOfferingController = require('../controllers/courseOfferingControlle
  *   get:
  *     summary: Get all course offerings
  *     tags: [CourseOfferings]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all course offerings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/CourseOffering'
  */
-router.get('/', courseOfferingController.getAllCourseOfferings);
+router.get('/', authenticateToken, courseOfferingController.getAllCourseOfferings);
 
 /**
  * @swagger
@@ -27,6 +37,8 @@ router.get('/', courseOfferingController.getAllCourseOfferings);
  *   get:
  *     summary: Get a course offering by ID
  *     tags: [CourseOfferings]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -37,10 +49,14 @@ router.get('/', courseOfferingController.getAllCourseOfferings);
  *     responses:
  *       200:
  *         description: Course offering found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CourseOffering'
  *       404:
  *         description: Course offering not found
  */
-router.get('/:id', courseOfferingController.getCourseOfferingById);
+router.get('/:id', authenticateToken, courseOfferingController.getCourseOfferingById);
 
 /**
  * @swagger
@@ -48,32 +64,52 @@ router.get('/:id', courseOfferingController.getCourseOfferingById);
  *   post:
  *     summary: Create a new course offering
  *     tags: [CourseOfferings]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - moduleId
+ *               - cohortId
+ *               - term
+ *               - academicYear
  *             properties:
- *               courseId:
+ *               moduleId:
  *                 type: string
+ *                 description: ID of the module being offered
  *               facilitatorId:
  *                 type: string
+ *                 description: ID of the facilitator assigned
+ *               cohortId:
+ *                 type: string
+ *                 description: ID of the cohort
  *               modeId:
  *                 type: string
- *               startDate:
+ *                 description: ID representing the delivery mode (e.g., online, onsite)
+ *               term:
  *                 type: string
- *                 format: date
- *               endDate:
+ *                 example: "Fall"
+ *               academicYear:
  *                 type: string
- *                 format: date
+ *                 example: "2025/2026"
+ *             example:
+ *               moduleId: "module123"
+ *               facilitatorId: "facilitator456"
+ *               cohortId: "cohort789"
+ *               modeId: "mode012"
+ *               term: "Spring"
+ *               academicYear: "2025/2026"
  *     responses:
  *       201:
- *         description: Course offering created
+ *         description: Course offering created successfully
  *       400:
  *         description: Invalid input
  */
-router.post('/', courseOfferingController.createCourseOffering);
+router.post('/', authenticateToken, authorizeRoles('manager'), courseOfferingController.createCourseOffering);
 
 /**
  * @swagger
@@ -81,6 +117,8 @@ router.post('/', courseOfferingController.createCourseOffering);
  *   put:
  *     summary: Update a course offering by ID
  *     tags: [CourseOfferings]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -95,27 +133,38 @@ router.post('/', courseOfferingController.createCourseOffering);
  *           schema:
  *             type: object
  *             properties:
- *               courseId:
+ *               moduleId:
  *                 type: string
+ *                 description: ID of the module
  *               facilitatorId:
  *                 type: string
+ *                 description: ID of the facilitator
+ *               cohortId:
+ *                 type: string
+ *                 description: ID of the cohort
  *               modeId:
  *                 type: string
- *               startDate:
+ *                 description: Delivery mode ID
+ *               term:
  *                 type: string
- *                 format: date
- *               endDate:
+ *               academicYear:
  *                 type: string
- *                 format: date
+ *             example:
+ *               moduleId: "moduleUpdated"
+ *               facilitatorId: "facilitatorUpdated"
+ *               cohortId: "cohortUpdated"
+ *               modeId: "modeUpdated"
+ *               term: "Summer"
+ *               academicYear: "2026/2027"
  *     responses:
  *       200:
- *         description: Course offering updated
+ *         description: Course offering updated successfully
  *       400:
  *         description: Invalid input
  *       404:
  *         description: Course offering not found
  */
-router.put('/:id', courseOfferingController.updateCourseOffering);
+router.put('/:id', authenticateToken, authorizeRoles('manager'), courseOfferingController.updateCourseOffering);
 
 /**
  * @swagger
@@ -123,6 +172,8 @@ router.put('/:id', courseOfferingController.updateCourseOffering);
  *   delete:
  *     summary: Delete a course offering by ID
  *     tags: [CourseOfferings]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -131,11 +182,11 @@ router.put('/:id', courseOfferingController.updateCourseOffering);
  *           type: string
  *         description: Course offering ID
  *     responses:
- *       200:
+ *       204:
  *         description: Course offering deleted
  *       404:
  *         description: Course offering not found
  */
-router.delete('/:id', courseOfferingController.deleteCourseOffering);
+router.delete('/:id', authenticateToken, authorizeRoles('manager'), courseOfferingController.deleteCourseOffering);
 
 module.exports = router;

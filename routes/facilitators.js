@@ -33,6 +33,7 @@ router.get('/', facilitatorController.getAllFacilitators);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *         description: Facilitator ID
  *     responses:
  *       200:
@@ -54,11 +55,27 @@ router.get('/:id', facilitatorController.getFacilitatorById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - fullName
+ *               - email
  *             properties:
- *               name:
+ *               id:
  *                 type: string
+ *                 format: uuid
+ *                 description: Optional UUID (auto-generated if not provided)
+ *               fullName:
+ *                 type: string
+ *                 example: "John Doe"
  *               email:
  *                 type: string
+ *                 format: email
+ *                 example: "john.doe@example.com"
+ *               phone:
+ *                 type: string
+ *                 example: "+237670123456"
+ *               password:
+ *                 type: string
+ *                 example: "strongpassword123"
  *     responses:
  *       201:
  *         description: Facilitator created
@@ -79,6 +96,7 @@ router.post('/', facilitatorController.createFacilitator);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *         description: Facilitator ID
  *     requestBody:
  *       required: true
@@ -87,9 +105,17 @@ router.post('/', facilitatorController.createFacilitator);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               fullName:
  *                 type: string
+ *                 example: "Jane Doe"
  *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "jane.doe@example.com"
+ *               phone:
+ *                 type: string
+ *                 example: "+237690987654"
+ *               password:
  *                 type: string
  *     responses:
  *       200:
@@ -113,6 +139,7 @@ router.put('/:id', facilitatorController.updateFacilitator);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *         description: Facilitator ID
  *     responses:
  *       200:

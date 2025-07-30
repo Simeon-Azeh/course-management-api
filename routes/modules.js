@@ -57,8 +57,8 @@ const moduleController = require('../controllers/modulesController');
  *                 type: string
  *               description:
  *                 type: string
- *               code:
- *                 type: string
+ *               durationWeeks:
+ *                 type: integer
  *     responses:
  *       201:
  *         description: Module created
@@ -90,8 +90,8 @@ const moduleController = require('../controllers/modulesController');
  *                 type: string
  *               description:
  *                 type: string
- *               code:
- *                 type: string
+ *               durationWeeks:
+ *                 type: integer
  *     responses:
  *       200:
  *         description: Module updated

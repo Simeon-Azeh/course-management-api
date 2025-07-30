@@ -4,16 +4,14 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class ActivityTracker extends Model {
     static associate(models) {
-      // Activity belongs to a student
-      ActivityTracker.belongsTo(models.Student, {
-        foreignKey: 'studentId',
-        as: 'student'
+      ActivityTracker.belongsTo(models.CourseOffering, {
+        foreignKey: 'allocationId',
+        as: 'allocation'
       });
 
-      // Activity may optionally be tied to a class
-      ActivityTracker.belongsTo(models.Class, {
-        foreignKey: 'classId',
-        as: 'class'
+      ActivityTracker.belongsTo(models.User, {      // Add association to User model
+        foreignKey: 'userId',
+        as: 'user'
       });
     }
   }
@@ -24,30 +22,46 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    studentId: {
+    allocationId: {
       type: DataTypes.UUID,
       allowNull: false
     },
-    classId: {
+    userId: {                            // New userId column
       type: DataTypes.UUID,
+      allowNull: false
+    },
+    attendance: {
+      type: DataTypes.BOOLEAN,
       allowNull: true
     },
-    activityType: {
-      type: DataTypes.ENUM('attendance', 'submission', 'participation'),
-      allowNull: false
+    formativeOneGrading: {
+      type: DataTypes.FLOAT,
+      allowNull: true
     },
-    timestamp: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
+    formativeTwoGrading: {
+      type: DataTypes.FLOAT,
+      allowNull: true
     },
-    notes: {
-      type: DataTypes.TEXT,
+    summativeGrading: {
+      type: DataTypes.FLOAT,
+      allowNull: true
+    },
+    courseModeration: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    intranetSync: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    gradeBookStatus: {
+      type: DataTypes.ENUM('pending', 'completed', 'failed'),
       allowNull: true
     }
   }, {
     sequelize,
     modelName: 'ActivityTracker',
-    tableName: 'activity_trackers',
+    tableName: 'activitytrackers',
     timestamps: true
   });
 

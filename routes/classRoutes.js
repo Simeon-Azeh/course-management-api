@@ -63,17 +63,34 @@ router.get('/:id', authenticateToken, classController.getClassById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - topic
+ *               - date
+ *               - time
+ *               - moduleId
+ *               - cohortId
+ *               - facilitatorId
  *             properties:
- *               name:
+ *               topic:
  *                 type: string
- *               description:
- *                 type: string
- *               startDate:
+ *               date:
  *                 type: string
  *                 format: date
- *               endDate:
+ *               time:
  *                 type: string
- *                 format: date
+ *                 format: time
+ *               durationMinutes:
+ *                 type: integer
+ *               moduleId:
+ *                 type: string
+ *               cohortId:
+ *                 type: string
+ *               facilitatorId:
+ *                 type: string
+ *               modeId:
+ *                 type: string
+ *               courseOfferingId:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Class created
@@ -106,16 +123,26 @@ router.post('/', authenticateToken, authorizeRoles('manager'), classController.c
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               topic:
  *                 type: string
- *               description:
- *                 type: string
- *               startDate:
+ *               date:
  *                 type: string
  *                 format: date
- *               endDate:
+ *               time:
  *                 type: string
- *                 format: date
+ *                 format: time
+ *               durationMinutes:
+ *                 type: integer
+ *               moduleId:
+ *                 type: string
+ *               cohortId:
+ *                 type: string
+ *               facilitatorId:
+ *                 type: string
+ *               modeId:
+ *                 type: string
+ *               courseOfferingId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Class updated
@@ -144,7 +171,7 @@ router.put('/:id', authenticateToken, authorizeRoles('manager'), classController
  *           type: string
  *         description: Class ID
  *     responses:
- *       200:
+ *       204:
  *         description: Class deleted
  *       403:
  *         description: Forbidden

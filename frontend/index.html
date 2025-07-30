@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="title">Student Reflection</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-book-reader"></i>
+        <h1 data-i18n="welcome">Welcome to My Reflection Page</h1>
+      </div>
+      <div class="language-control">
+        <i class="fas fa-globe"></i>
+        <select id="languageSwitcher">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <p class="intro-text" data-i18n="intro">Please take a moment to reflect on your learning experience.</p>
+      <p class="author">Simeon Azeh Kongnyuy - July 28, 2025</p>
+    </section>
+
+    <div class="reflection-content">
+      <div class="question-container">
+        <div class="question-card">
+          <h3 data-i18n="q1">What did you enjoy most about the course?</h3>
+          <div class="reflection-text" id="reflection1"></div>
+        </div>
+        
+        <div class="question-card">
+          <h3 data-i18n="q2">What was the most challenging part?</h3>
+          <div class="reflection-text" id="reflection2"></div>
+        </div>
+        
+        <div class="question-card">
+          <h3 data-i18n="q3">What could be improved?</h3>
+          <div class="reflection-text" id="reflection3"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="conclusion">
+      <p data-i18n="conclusion">These reflections represent my personal journey through this course. I'm grateful for the opportunity to learn and grow.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p data-i18n="footer">© 2025 Course Management Platform</p>
+      <div class="footer-links">
+        <a href="#" data-i18n="privacy">Privacy Policy</a>
+        <a href="#" data-i18n="terms">Terms of Use</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/i18next@21.6.14/i18next.min.js"></script>
+  <script src="translations.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
