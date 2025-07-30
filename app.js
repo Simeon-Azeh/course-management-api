@@ -27,20 +27,20 @@ const managerRoutes = require('./routes/manager');
 
 
 // Use routes
-app.use('/auth', authRoutes);
-app.use('/allocations', allocationRoutes);
-app.use('/activitytracker', activityTrackerRoutes);
-app.use('/students', studentRoutes);
-app.use('/classes', classRoutes);
-app.use('/modules', moduleRoutes);
-app.use('/managers', managerRoutes);
-app.use('/facilitators', facilitatorRoutes);
-app.use('/cohorts', cohortRoutes);
-app.use('/modes', modeRoutes);
-app.use('/courseofferings', courseOfferingRoutes);
-app.use('/attendances', attendanceRoutes);
-app.use('/assessments', require('./routes/assessmentRoutes'));
-app.use('/assessmentsubmissions', assessmentSubmissionRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/allocations', allocationRoutes);
+app.use('/api/activitytracker', activityTrackerRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/classes', classRoutes);
+app.use('/api/modules', moduleRoutes);
+app.use('/api/managers', managerRoutes);
+app.use('/api/facilitators', facilitatorRoutes);
+app.use('/api/cohorts', cohortRoutes);
+app.use('/api/modes', modeRoutes);
+app.use('/api/courseofferings', courseOfferingRoutes);
+app.use('/api/attendances', attendanceRoutes);
+app.use('/api/assessments', assessmentRoutes);
+app.use('/api/assessmentsubmissions', assessmentSubmissionRoutes);
 
 
 app.get('/', (req, res) => {

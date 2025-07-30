@@ -93,7 +93,7 @@ https://reflectionsimeon.netlify.app/
 
 2. **Configure database:**
    - Ensure your database is running and accessible.
-   - Update `config/database.js` or your ORM config as needed.
+   - Update `config/db.js` or your ORM config as needed.
 
 ---
 
@@ -102,10 +102,26 @@ https://reflectionsimeon.netlify.app/
 The main tables/models include:
 
 - **User**: Stores user info, authentication credentials, and roles.
-- **Course**: Basic course information.
-- **CourseOffering**: Specific offerings/instances of a course.
-- **ActivityTracker**: Logs activities for each course offering and user.
-- **Role**: Defines user roles (admin, instructor, student, etc.).
+- **Role**: Defines user roles (admin, manager, facilitator, student, etc.).
+- **Manager**: Academic manager accounts.
+- **Facilitator**: Faculty/facilitator accounts.
+- **Student**: Student accounts.
+- **Module (Course)**: Basic course/module information.
+- **Cohort**: Student groupings by year/intake.
+- **Class**: Class identifiers (e.g., '2024S', '2025J').
+- **Mode**: Delivery mode (Online, In-person, Hybrid).
+- **CourseOffering**: Specific offerings/instances of a course (linked to module, class, cohort, trimester, intake, mode, facilitator).
+- **ActivityTracker**: Logs weekly activities for each course offering and facilitator.
+- **Assessment**: Assessment definitions for modules/courses.
+- **AssessmentSubmission**: Student submissions for assessments.
+- **Attendance**: Attendance records for students in classes.
+- **SequelizeMeta**: Sequelize migration tracking table (internal).
+  
+**Relationships:**  
+- Managers assign facilitators to course offerings.
+- Facilitators submit activity logs for their assigned offerings.
+- Students are grouped in cohorts and classes, and submit assessments.
+- Attendance and grading are tracked per course offering.
 
 **Example Sequelize Model:**
 ```javascript
@@ -130,11 +146,11 @@ module.exports = (sequelize, DataTypes) => {
 - **JWT Tokens:**  
   On successful login, a JWT token is issued and must be sent with protected API requests.
 - **Role-Based Access:**  
-  Middleware checks user roles for access to certain endpoints (e.g., only instructors can create course offerings).
+  Middleware checks user roles for access to certain endpoints (e.g., only managers can create course offerings).
 
 **Example Login Request:**
 ```http
-POST /api/auth/login
+POST /auth/login
 Content-Type: application/json
 
 {
@@ -145,7 +161,7 @@ Content-Type: application/json
 
 **Example Protected Request:**
 ```http
-GET /api/activity-logs
+GET /activitytracker
 Authorization: Bearer <your-jwt-token>
 ```
 
@@ -222,46 +238,47 @@ You can use [Postman](https://www.postman.com/) or [curl](https://curl.se/) to t
 
 - **Get all activity logs:**
   ```
-  GET http://localhost:3000/api/activity-logs
+  GET http://localhost:5000/api/activitytracker
   ```
 
 - **Get activity log by ID:**
   ```
-  GET http://localhost:3000/api/activity-logs/:id
+  GET http://localhost:5000/api/activitytracker/:id
   ```
 
 - **Create activity log:**
   ```
-  POST http://localhost:3000/api/activity-logs
+  POST http://localhost:5000/api/activitytracker
   Content-Type: application/json
 
   {
-    "allocationId": 1,
-    "attendance": true,
-    "formativeOneGrading": true,
-    "formativeTwoGrading": false,
-    "summativeGrading": true,
-    "courseModeration": false,
-    "intranetSync": true,
-    "gradeBookStatus": "completed"
-  }
+  "allocationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "attendance": true,
+  "formativeOneGrading": 0,
+  "formativeTwoGrading": 0,
+  "summativeGrading": 0,
+  "courseModeration": true,
+  "intranetSync": true,
+  "gradeBookStatus": "pending"
+}
   ```
 
 - **Update activity log:**
   ```
-  PUT http://localhost:3000/api/activity-logs/:id
+  PUT http://localhost:5000/api/activitytracker/:id
   Content-Type: application/json
 
   {
     "attendance": false,
-    "formativeOneGrading": true,
+    "formativeOneGrading": 0,
     ...
   }
   ```
 
 - **Delete activity log:**
   ```
-  DELETE http://localhost:3000/api/activity-logs/:id
+  DELETE http://localhost:5000/api/activitytracker/:id
   ```
 
 ---

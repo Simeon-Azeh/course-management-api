@@ -6,14 +6,14 @@ const createActivityLog = async (data) => {
 
 const getActivityLogById = async (id) => {
   return await ActivityTracker.findByPk(id, {
-     include: { model: CourseOffering, as: 'allocation' }
+    include: { model: CourseOffering, as: 'allocation' }
   });
 };
 
-const getAllLogs = async (filter = {}) => {
+const getAllActivityLogs = async (filter = {}) => {
   return await ActivityTracker.findAll({
     where: filter,
-      include: { model: CourseOffering, as: 'allocation' } 
+    include: { model: CourseOffering, as: 'allocation' }
   });
 };
 
@@ -32,7 +32,7 @@ const deleteActivityLog = async (id) => {
 module.exports = {
   createActivityLog,
   getActivityLogById,
-  getAllLogs,
+  getAllActivityLogs,
   updateActivityLog,
   deleteActivityLog
 };
