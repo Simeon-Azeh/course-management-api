@@ -1,0 +1,330 @@
+# Course Management Platform
+
+A full-stack platform for managing courses, offerings, and student activity logs.  
+Includes internationalization (i18n), activity tracking, notifications, and Redis-backed job queues.
+
+---
+
+## Video walkthrough
+
+
+## Swagger documentation 
+http://localhost:5000/api-docs/
+
+
+## My reflection live demo 
+
+https://reflectionsimeon.netlify.app/
+
+## Table of Contents
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Environment Setup](#environment-setup)
+- [Database Schema Overview](#database-schema-overview)
+- [Authentication Flow](#authentication-flow)
+- [Running the Project](#running-the-project)
+- [Redis Setup](#redis-setup)
+- [Testing API Endpoints](#testing-api-endpoints)
+- [Internationalization (i18n)](#internationalization-i18n)
+- [Project Structure](#project-structure)
+- [Troubleshooting](#troubleshooting)
+- [Example Usage Scenarios](#example-usage-scenarios)
+- [License](#license)
+- [Author](#author)
+
+---
+
+## Features
+
+- Course and offering management
+- Student activity tracking
+- RESTful API endpoints
+- Notification worker (email, etc.) using Bull and Redis
+- Internationalized frontend (English & French)
+- Modular service/controller architecture
+- Authentication and role-based access
+
+---
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (v16+ recommended)
+- [npm](https://www.npmjs.com/)
+- [Redis](https://redis.io/) (for notifications and job queues)
+- [Git](https://git-scm.com/) (optional, for cloning)
+- [MySQL](https://www.mysql.com/) (for persistent database)
+
+---
+
+## Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Simeon-Azeh/course-management-platform.git
+   cd course-management-platform
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+---
+
+## Environment Setup
+
+1. **Configure environment variables:**
+
+   Create a `.env` file in the root directory and add your settings:
+   ```
+   PORT=3000
+   DB_HOST=localhost
+   DB_USER=your_db_user
+   DB_PASS=your_db_password
+   DB_NAME=your_db_name
+   REDIS_HOST=127.0.0.1
+   REDIS_PORT=6379
+   EMAIL_USER=your@email.com
+   EMAIL_PASS=yourpassword
+   JWT_SECRET=your_jwt_secret
+   ```
+
+2. **Configure database:**
+   - Ensure your database is running and accessible.
+   - Update `config/database.js` or your ORM config as needed.
+
+---
+
+## Database Schema Overview
+
+The main tables/models include:
+
+- **User**: Stores user info, authentication credentials, and roles.
+- **Course**: Basic course information.
+- **CourseOffering**: Specific offerings/instances of a course.
+- **ActivityTracker**: Logs activities for each course offering and user.
+- **Role**: Defines user roles (admin, instructor, student, etc.).
+
+**Example Sequelize Model:**
+```javascript
+// models/User.js
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
+    name: DataTypes.STRING,
+    email: DataTypes.STRING,
+    password: DataTypes.STRING,
+    role: DataTypes.STRING
+  });
+  return User;
+};
+```
+
+---
+
+## Authentication Flow
+
+- **Registration/Login:**  
+  Users register and log in via API endpoints. Passwords are hashed and stored securely.
+- **JWT Tokens:**  
+  On successful login, a JWT token is issued and must be sent with protected API requests.
+- **Role-Based Access:**  
+  Middleware checks user roles for access to certain endpoints (e.g., only instructors can create course offerings).
+
+**Example Login Request:**
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+```
+
+**Example Protected Request:**
+```http
+GET /api/activity-logs
+Authorization: Bearer <your-jwt-token>
+```
+
+---
+
+## Running the Project
+
+1. **Start the backend server:**
+   ```bash
+   npm start
+   ```
+   or
+   ```bash
+   node server.js
+   ```
+
+2. **Start the notification worker (in a separate terminal):**
+   ```bash
+   node workers/notificationWorker.js
+   ```
+
+3. **Open the frontend:**
+   - Open `frontend/index.html` in your browser.
+   - Or serve with a static server:
+     ```bash
+     npx serve frontend
+     ```
+
+---
+
+## Redis Setup
+
+Redis is required for job queues and notifications.
+
+### Option 1: Local Installation
+
+- **Windows:**  
+  Download [Memurai](https://www.memurai.com/) or [Redis for Windows](https://github.com/microsoftarchive/redis/releases).
+- **Linux/macOS:**  
+  Install via package manager:
+  ```bash
+  sudo apt-get install redis-server
+  # or
+  brew install redis
+  ```
+
+- **Start Redis:**
+  ```bash
+  redis-server
+  ```
+
+### Option 2: Docker
+
+If you have Docker installed:
+```bash
+docker run -p 6379:6379 redis
+```
+
+### Option 3: Remote Redis
+
+Update your `redisClient.js`:
+```javascript
+const Redis = require('ioredis');
+const redis = new Redis({ host: 'your-redis-host', port: your-redis-port });
+```
+
+---
+
+## Testing API Endpoints
+
+You can use [Postman](https://www.postman.com/) or [curl](https://curl.se/) to test the REST API.
+
+### Example Endpoints
+
+- **Get all activity logs:**
+  ```
+  GET http://localhost:3000/api/activity-logs
+  ```
+
+- **Get activity log by ID:**
+  ```
+  GET http://localhost:3000/api/activity-logs/:id
+  ```
+
+- **Create activity log:**
+  ```
+  POST http://localhost:3000/api/activity-logs
+  Content-Type: application/json
+
+  {
+    "allocationId": 1,
+    "attendance": true,
+    "formativeOneGrading": true,
+    "formativeTwoGrading": false,
+    "summativeGrading": true,
+    "courseModeration": false,
+    "intranetSync": true,
+    "gradeBookStatus": "completed"
+  }
+  ```
+
+- **Update activity log:**
+  ```
+  PUT http://localhost:3000/api/activity-logs/:id
+  Content-Type: application/json
+
+  {
+    "attendance": false,
+    "formativeOneGrading": true,
+    ...
+  }
+  ```
+
+- **Delete activity log:**
+  ```
+  DELETE http://localhost:3000/api/activity-logs/:id
+  ```
+
+---
+
+## Internationalization (i18n)
+
+- The frontend supports English and French.
+- Use the language switcher in the header to change languages.
+- All reflection content and UI text will update automatically.
+
+---
+
+## Example Usage Scenarios
+
+### 1. **Instructor logs activity for a course offering**
+- Instructor logs in, navigates to a course offering, and submits attendance and grading info.
+- Activity log is created and can be viewed by admins.
+
+### 2. **Student views reflection page**
+- Student opens the frontend, switches language, and reads personal reflections on the course.
+
+### 3. **Admin receives notification**
+- When a new activity log is created, a notification job is queued and processed by the worker, sending an email via Redis/Bull.
+
+---
+
+## Project Structure
+
+```
+course-management-platform/
+├── controllers/
+│   └── activityTrackerController.js
+├── models/
+├── services/
+│   └── activityTrackerService.js
+├── workers/
+│   └── notificationWorker.js
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   ├── index.js
+│   └── translations.js
+├── redisClient.js
+├── server.js
+├── .env
+└── README.md
+```
+
+---
+
+## Troubleshooting
+
+- **Redis connection errors:**  
+  Make sure Redis is running and accessible at the configured host/port.
+- **Database errors:**  
+  Check your database credentials and connection settings.
+- **Email sending issues:**  
+  Update SMTP credentials in `notificationWorker.js` and allow less secure apps if using Gmail for testing.
+- **Port conflicts:**  
+  Change the `PORT` in `.env` if needed.
+
+---
+
+## License
+
+MIT
