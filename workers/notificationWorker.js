@@ -1,17 +1,17 @@
 const Queue = require('bull');
 const redis = require('../redisClient');
 const nodemailer = require('nodemailer');
-const { User } = require('../models'); 
+const { User, Notification } = require('../models'); 
 
-// For testing, 
+// For testing,
 async function createTestTransporter() {
   const testAccount = await nodemailer.createTestAccount();
   return nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
-     auth: {
-        user: 'hilda.farrell23@ethereal.email',
-        pass: 'BTdNxFpRPJPNVdz8qY'
+    auth: {
+      user: 'hilda.farrell23@ethereal.email',
+      pass: 'BTdNxFpRPJPNVdz8qY'
     }
   });
 }
@@ -53,8 +53,16 @@ notificationQueue.process(async (job) => {
       await sendEmail(userId, message);
       console.log(`Email sent to User ${userId}`);
     }
+    // Save notification to DB
+    await Notification.create({
+      userId,
+      message,
+      read: false,
+      courseId: courseId || null
+    });
+    console.log(`Notification saved to DB for User ${userId}`);
   } catch (err) {
-    console.error('Error sending email:', err);
+    console.error('Error sending email or saving notification:', err);
     throw err;
   }
 

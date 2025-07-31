@@ -24,6 +24,7 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 const assessmentRoutes = require('./routes/assessmentRoutes');
 const assessmentSubmissionRoutes = require('./routes/assessmentSubmissionRoutes');
 const managerRoutes = require('./routes/manager');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 
 // Use routes
@@ -41,6 +42,7 @@ app.use('/api/courseofferings', courseOfferingRoutes);
 app.use('/api/attendances', attendanceRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/assessmentsubmissions', assessmentSubmissionRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 
 app.get('/', (req, res) => {

@@ -166,6 +166,19 @@ const options = {
             present: { type: 'boolean', example: true }
           },
           required: ['id', 'studentId', 'classId', 'date', 'present']
+        },
+        Notification: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', format: 'uuid', example: 'notification-uuid' },
+            userId: { type: 'string', format: 'uuid', example: 'user-uuid' },
+            message: { type: 'string', example: 'Your grade has been updated.' },
+            read: { type: 'boolean', example: false },
+            courseId: { type: 'string', format: 'uuid', example: 'course-uuid' },
+            createdAt: { type: 'string', format: 'date-time', example: '2025-07-31T14:15:55Z' },
+            updatedAt: { type: 'string', format: 'date-time', example: '2025-07-31T14:15:55Z' }
+          },
+          required: ['id', 'userId', 'message', 'read', 'createdAt', 'updatedAt']
         }
       }
     },
@@ -175,7 +188,7 @@ const options = {
       },
     ],
   },
-  apis: ['./routes/*.js'], // your route files with swagger annotations
+  apis: ['./routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
