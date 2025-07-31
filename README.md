@@ -7,7 +7,7 @@ Includes internationalization (i18n), activity tracking, notifications, and Redi
 
 ## Video walkthrough
 
-*(Add link or instructions if available)*
+[*(Demo video url)*](https://youtu.be/_FTj1qnSTWw)
 
 ## Swagger documentation 
 http://localhost:5000/api-docs/
