@@ -7,13 +7,12 @@ Includes internationalization (i18n), activity tracking, notifications, and Redi
 
 ## Video walkthrough
 
+*(Add link or instructions if available)*
 
 ## Swagger documentation 
 http://localhost:5000/api-docs/
 
-
 ## My reflection live demo 
-
 https://reflectionsimeon.netlify.app/
 
 ## Table of Contents
@@ -31,6 +30,8 @@ https://reflectionsimeon.netlify.app/
 - [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
 - [Example Usage Scenarios](#example-usage-scenarios)
+- [API Documentation](#api-documentation)
+- [Assumptions & Limitations](#assumptions--limitations)
 - [License](#license)
 - [Author](#author)
 
@@ -99,6 +100,8 @@ https://reflectionsimeon.netlify.app/
 
 ## Database Schema Overview
 
+*(See Swagger docs for full schema details)*
+
 The main tables/models include:
 
 - **User**: Stores user info, authentication credentials, and roles.
@@ -115,6 +118,7 @@ The main tables/models include:
 - **Assessment**: Assessment definitions for modules/courses.
 - **AssessmentSubmission**: Student submissions for assessments.
 - **Attendance**: Attendance records for students in classes.
+- **Notification**: Stores notifications sent to users.
 - **SequelizeMeta**: Sequelize migration tracking table (internal).
   
 **Relationships:**  
@@ -122,20 +126,6 @@ The main tables/models include:
 - Facilitators submit activity logs for their assigned offerings.
 - Students are grouped in cohorts and classes, and submit assessments.
 - Attendance and grading are tracked per course offering.
-
-**Example Sequelize Model:**
-```javascript
-// models/User.js
-module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    role: DataTypes.STRING
-  });
-  return User;
-};
-```
 
 ---
 
@@ -252,16 +242,16 @@ You can use [Postman](https://www.postman.com/) or [curl](https://curl.se/) to t
   Content-Type: application/json
 
   {
-  "allocationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "attendance": true,
-  "formativeOneGrading": 0,
-  "formativeTwoGrading": 0,
-  "summativeGrading": 0,
-  "courseModeration": true,
-  "intranetSync": true,
-  "gradeBookStatus": "pending"
-}
+    "allocationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "attendance": true,
+    "formativeOneGrading": 0,
+    "formativeTwoGrading": 0,
+    "summativeGrading": 0,
+    "courseModeration": true,
+    "intranetSync": true,
+    "gradeBookStatus": "pending"
+  }
   ```
 
 - **Update activity log:**
@@ -281,6 +271,8 @@ You can use [Postman](https://www.postman.com/) or [curl](https://curl.se/) to t
   DELETE http://localhost:5000/api/activitytracker/:id
   ```
 
+*(See Swagger UI for full endpoint documentation and request/response examples)*
+
 ---
 
 ## Internationalization (i18n)
@@ -294,14 +286,13 @@ You can use [Postman](https://www.postman.com/) or [curl](https://curl.se/) to t
 ## Example Usage Scenarios
 
 ### 1. **Instructor logs activity for a course offering**
-- Instructor logs in, navigates to a course offering, and submits attendance and grading info.
-- Activity log is created and can be viewed by admins.
+- facilitator logs in, navigates to a course offering, and submits attendance and grading info.
+- Activity log is created and can be viewed by managers .
 
-### 2. **Student views reflection page**
-- Student opens the frontend, switches language, and reads personal reflections on the course.
+### 2. **Student views their dashboard data**
 
-### 3. **Admin receives notification**
-- When a new activity log is created, a notification job is queued and processed by the worker, sending an email via Redis/Bull.
+### 3. **managers and users  receives notification**
+- When a new activity log is created, a notification job is queued and processed by the worker, sending an email via Redis/Bull and saving to the notifications table.
 
 ---
 
@@ -339,9 +330,35 @@ course-management-platform/
   Update SMTP credentials in `notificationWorker.js` and allow less secure apps if using Gmail for testing.
 - **Port conflicts:**  
   Change the `PORT` in `.env` if needed.
+- **Migration issues:**
+  create new migration files if needed
+
+---
+
+## API Documentation
+
+- Full API documentation is available at [Swagger UI](http://localhost:5000/api-docs/).
+- All endpoints, request/response examples, and status codes are documented there.
+
+---
+
+## Assumptions & Limitations
+
+- Only managers can assign facilitators and create course offerings.
+- Only facilitators assigned to a course offering can submit activity logs for it.
+- Notifications are sent via email and stored in the database; push notifications are not implemented.
+- Passwords are hashed using bcrypt before storage.
+- The frontend is a simple static SPA; advanced features (e.g., file uploads, analytics) are not included.
+- The system assumes all users have unique emails.
+- Internationalization is limited to English and French.
+- The system requires Redis and MySQL to be running for full functionality.
 
 ---
 
 ## License
 
 MIT
+
+---
+
+##
